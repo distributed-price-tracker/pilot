@@ -1,12 +1,25 @@
 import requests
 import json
 
-url = "https://api.myntra.com/v3/layout/shoes/nike/nike-killshot-2-leather-men's-shoes/36555048/buy"
+url = "https://api.myntra.com/auth/v1/token"
+
+headers = {
+    "accept": "application/json",
+    "user-agent": "MyntraRetailAndroid/4.2512.10",
+    "clientid": "myntra-02d7dec5-8a00-4c74-9cf7-9d62dbea5e61",
+    "x-myntra-app": "appFamily=MyntraRetailAndroid; appVersion=4.2512.10; deviceCategory=Phone;",
+    "x-meta-app": "appFamily=MyntraRetailAndroid; appVersion=4.2512.10; deviceCategory=Phone;",
+    "x-myntra-store-context": "myntra",
+}
+
+auth_token = requests.get(url, headers=headers).headers.get('at')
+
+url = "https://api.myntra.com/v3/layout/x/x/x/{product_id}/buy"
 
 headers = {
     "accept": "application/json; charset=utf-8",
     "accept-language": "en-US,en;q=0.5",
-    "at": "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJbXRwWkNJNklqRWlMQ0owZVhBaU9pSktWMVFpZlEuZXlKdWFXUjRJam9pTTJabE0yUTBaRGN0Wkdaak9TMHhNV1l3TFdJNFpERXRPV0UzTXpSbU5UTTRabVl5SWl3aVkybGtlQ0k2SW0xNWJuUnlZUzB3TW1RM1pHVmpOUzA0WVRBd0xUUmpOelF0T1dObU55MDVaRFl5WkdKbFlUVmxOakVpTENKaGNIQk9ZVzFsSWpvaWJYbHVkSEpoSWl3aWMzUnZjbVZKWkNJNklqSXlPVGNpTENKbGVIQWlPakUzT0RJd01qTTFPVEFzSW1semN5STZJa2xFUlVFaWZRLjhVNDVfTmlXZTltVUVjT3BsR2FKNnZjd0t4ZHN6eVdGUF81RHZUcGJKZkU=",
+    "at": auth_token,
     "user-agent": "MyntraRetailAndroid/4.2512.10 (Phone, 420dpi); MyntraAndroid/4.2512.10 (Phone, 420dpi); api;",
     "content-type": "application/json; charset=utf-8"
 }
@@ -14,23 +27,22 @@ headers = {
 payload = {
     "pageContext": {
         "RequestPayloadData": {
-            "pincode": "500001",
-            "nonWorkingDays": [],
-            "shouldShowInfiniteProductHC": True,
-            "isOpenedFromDeeplink": True,
-            "immersiveFwdEnabled": True,
+            "pincode": "535001",
             "store": "myntra",
             "customerCohorts": []
         }
     },
-    "pageUri": "/v3/layout/shoes/nike/nike-killshot-2-leather-men's-shoes/36555048/buy"
 }
 
+product_id = "36555048"
+
 response = requests.post(
-    url,
+    url.format(product_id=product_id),
     headers=headers,
-    data=json.dumps(payload),
+    json=payload,
     timeout=30
 )
 
-print(response.json()['pageMeta'])
+res = response.json()['pageMeta']['gtmData']
+
+print(res)
